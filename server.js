@@ -24,7 +24,7 @@ app.get('/notes', (req, res) => {
 
 app.get('/api/notes', (req, res) => {
     let reply = fileMaker()
-    console.log(reply)
+    // console.log(reply)
     res.json(reply)
 })
 
@@ -50,7 +50,24 @@ app.post('/api/notes', (req, res) => {
 
 })
 
-// only need to make it so the get will pull the data from the json and put it on the side and the post will add to the json
+
+app.delete('/api/notes/:id', (req, res) => {
+    // return the array of obj json
+    let reply = fileMaker();
+    let noteID = req.params.id;
+    console.log(noteID)
+    // new array of all the notes but the one from the id param is not included - deleted
+    let refReply = reply.filter(chosen => chosen.id !== noteID * 1)
+
+    // need to take the array, select the one from the id param, splice it out
+
+    let newRef = JSON.stringify(refReply)
+    let refMain = fs.writeFile(`${__dirname}/db/db.json`, newRef, 'utf8', (err) => {
+        if (err) { console.log(err) } else { console.log("note deleted") }
+    })
+    res.json(refMain);
+})
+
 
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.html'));
